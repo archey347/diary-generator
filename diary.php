@@ -43,7 +43,7 @@ if (isset($a['submit'])) {
         foreach($form_birthdays['birthdays'] as $person) {
             $date = date("d-m-$y", strtotime($person['date']));
             
-            if ($birthdays == null) {
+            if ($birthdays[$date] == null) {
                 $birthdays[$date] = [];
             }
 
