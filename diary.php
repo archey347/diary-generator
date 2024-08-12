@@ -1,7 +1,9 @@
 <?php
+
 $a = $_POST;
+
 if (isset($a['submit'])) {
-    $y = $a["yea.r"];
+    $y = $a["year"];
 
     $months = array(
         1 => "January",
@@ -17,8 +19,10 @@ if (isset($a['submit'])) {
         11 => "November",
         12 => "December"
     );
+
     $id = 1;
     $people = array();
+    
     while (true) {
         if (isset($_POST["person$id"])) {
             if ($_POST["person$id"] != "") {
@@ -29,82 +33,100 @@ if (isset($a['submit'])) {
         }
         $id++;
     }
-    //$people = array("Dave", "Jules", "Cerian", "Archey");
+
     $birthdayCol = $a['birthdayCol'] == "yes";
-    $birthdays = array();
-    $id = 1;
+    $birthdays = [];
+    
     if ($birthdayCol) {
-        while (true) {
+        $form_birthdays = json_decode($_POST['birthdays'], true);
 
-            if (isset($_POST["birthperson$id"])) {
-                if ($_POST["birthperson$id"] != "" && $_POST["birthdate$id"] != "") {
-                    $birthdays[$_POST["birthperson$id"]] = $_POST["birthdate$id"];
-                }
-            } else {
-                break;
+        foreach($form_birthdays['birthdays'] as $person) {
+            $date = date("d-m-$y", strtotime($person['date']));
+            
+            if ($birthdays == null) {
+                $birthdays[$date] = [];
             }
-            $id++;
-        }
 
-        $calendar = "";
-        $tmp = array();
-        foreach ($birthdays as $key => $value) {
-
-            $date = strtotime($value);
-            $date = date("d-m-$y", $date);
-            $tmp[$key]  = $date;
+            array_push($birthdays[$date], $person['name']);
         }
-        $birthdays = $tmp;
     }
+
     $fonts = array(
-        "Arial",
         "monospace",
-        "Comic Sans MS",
-        "Brush Script Std, Brush Script MT, cursive",
+        "cursive",
+        "serif",
+        "'Edu VIC WA NT Beginner', cursive",
+        "'Comic Neue', cursive",
+        "'Sankofa Display', sans-serif",
     );
-    foreach ($months as $no => $month) {
-        $day = 1;
 
-        print("<div style=\" page-break-after: always; width: 21cm; height: 26cm;\"><span style=\"font-family: " . $fonts[rand(0, 4)] . "; width: 100%; text-align: center;\"><h2>$month $y</h2></span><table class=\"diaryTbl\" style=\"width: 100%; height: 24.5cm\">");
-        print("<thead><tr><th style=\"width: 40px;\">Date</th>");
-        $peopleRow = "";
-        foreach ($people as $person) {
-            $peopleRow .= "<td></td>";
-            print("<th>$person</th>");
-        }
-        if ($birthdayCol) {
-            print("<th style=\"width: 70px;\">Birthdays</th>");
-        }
-        print("</tr></thead>");
-        $days = cal_days_in_month(CAL_GREGORIAN, $no, $y);
-        while ($day <= $days) {
-            if ($birthdayCol) {
-                $names = "";
-                foreach ($birthdays as $name => $date) {
-                    if (strtotime($date) == strtotime("$day-$no-$y")) {
-                        $names .= "$name ";
-                    }
-                }
-                $birthday = "<td>$names</td>";
-            } else {
-                $birthday = "";
+    $calendar = function () use ($months, $people, $fonts, $birthdayCol, $birthdays, $y) {
+        foreach ($months as $no => $month) {
+            $day = 1;
+
+            print("<div style=\" page-break-after: always; width: 21cm; height: 26cm;\"><span style=\"font-family: " . $fonts[rand(0, 4)] . "; width: 100%; text-align: center;\"><h2>$month $y</h2></span><table class=\"diaryTbl\" style=\"width: 100%; height: 24.25cm\">");
+            print("<thead><tr><th style=\"width: 40px;\">Date</th>");
+            $peopleRow = "";
+            foreach ($people as $person) {
+                $peopleRow .= "<td></td>";
+                print("<th>$person</th>");
             }
-            $date = (date("D j", strtotime("$day-$no-$y")) . " <br>");
-            print("<tr><td><b>$date</b></td>$peopleRow$birthday</tr>");
-            $day++;
+            if ($birthdayCol) {
+                print("<th style=\"width: 70px;\">Birthdays</th>");
+            }
+            print("</tr></thead>");
+            $days = cal_days_in_month(CAL_GREGORIAN, $no, $y);
+            while ($day <= $days) {
+                $birthday = "";
+
+                $names = "";
+
+                if ($birthdayCol) {
+                    $bday_date = date("d-m-Y", strtotime("$day-$no-$y"));
+
+                    $birthdays_today = $birthdays[$bday_date];
+
+                    if($birthdays_today != null) {
+                        $names = implode("", $birthdays_today);                    
+                    }
+
+                    $birthday = "<td>$names</td>";
+                }
+
+                $date = (date("D j", strtotime("$day-$no-$y")) . " <br>");
+
+                print("<tr><td><b>$date</b></td>$peopleRow$birthday</tr>");
+
+                $day++;
+            }
+
+            print("</table><center><b>$month $y</b></center></div>");
         }
-        print("</table><center><b>$month $y</b></center></div>");
-    }
+    };
+
     $printCal = True;
 }
-?>
 
+?><!DOCTYPE html>
 <html>
 
 <head>
     <meta charset="UTF-8">
     <title>Calendar Generator</title>
     <meta name="viewport" content="width=500px, initial-scale=0.8">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Edu+VIC+WA+NT+Beginner:wght@400..700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Edu+VIC+WA+NT+Beginner:wght@400..700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Edu+VIC+WA+NT+Beginner:wght@400..700&family=Sankofa+Display&display=swap" rel="stylesheet">
+    
+    
+    
     <style>
         body {
             size: 21cm 29.7cm;
@@ -114,6 +136,7 @@ if (isset($a['submit'])) {
 
         .diaryTbl {
             border-collapse: collapse;
+            margin-top: 0.25cm;
         }
 
         th {
@@ -160,7 +183,7 @@ if (isset($a['submit'])) {
     <?php
     if (isset($printCal)) {
         if ($printCal) {
-            print($calendar);
+            $calendar();
             exit;
         }
     }
@@ -186,7 +209,7 @@ if (isset($a['submit'])) {
         <input type="checkbox" value="yes" name="birthdayCol" checked id="birthdayCol" onclick="if(this.checked) { document.getElementById('birthdays').style.display = 'block'; } else { document.getElementById('birthdays').style.display = 'none'; }" />
         
         <div id="birthdays" class="birthdays" style="padding-top: 10px;">
-            <textarea id="data" style="width: 300px; height: 400px; padding-bottom: 10px;"></textarea>
+            <textarea id="data" name="birthdays" style="width: 300px; height: 400px; padding-bottom: 10px;"></textarea>
             <table>
                 <tr>
                     <td>Name<br><input type="text" name="birth_name" id="birth_name" style="width: 200px;" /></td>
