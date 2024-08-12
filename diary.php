@@ -58,13 +58,17 @@ if (isset($a['submit'])) {
         "'Edu VIC WA NT Beginner', cursive",
         "'Comic Neue', cursive",
         "'Sankofa Display', sans-serif",
+        "'Space Grotesk', sans-serif",
+        "'Baskervville SC', serif"
     );
 
     $calendar = function () use ($months, $people, $fonts, $birthdayCol, $birthdays, $y) {
         foreach ($months as $no => $month) {
             $day = 1;
 
-            print("<div style=\" page-break-after: always; width: 21cm; height: 26cm;\"><span style=\"font-family: " . $fonts[rand(0, 4)] . "; width: 100%; text-align: center;\"><h2>$month $y</h2></span><table class=\"diaryTbl\" style=\"width: 100%; height: 24.25cm\">");
+            $font = $fonts[rand(0, count($fonts))];
+
+            print("<div style=\" page-break-after: always; width: 21cm; height: 26cm;\"><span style=\"font-family: " . $font . "; width: 100%; text-align: center;\"><h2>$month $y</h2></span><table class=\"diaryTbl\" style=\"width: 100%; height: 24.25cm\">");
             print("<thead><tr><th style=\"width: 40px;\">Date</th>");
             $peopleRow = "";
             foreach ($people as $person) {
@@ -124,8 +128,12 @@ if (isset($a['submit'])) {
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Edu+VIC+WA+NT+Beginner:wght@400..700&family=Sankofa+Display&display=swap" rel="stylesheet">
-    
-    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Edu+VIC+WA+NT+Beginner:wght@400..700&family=Sankofa+Display&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Baskervville+SC&family=Comic+Neue:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Edu+VIC+WA+NT+Beginner:wght@400..700&family=Sankofa+Display&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
     
     <style>
         body {
