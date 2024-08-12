@@ -68,8 +68,8 @@ if (isset($a['submit'])) {
 
             $font = $fonts[rand(0, count($fonts))];
 
-            print("<div style=\" page-break-after: always; width: 21cm; height: 26cm;\"><span style=\"font-family: " . $font . "; width: 100%; text-align: center;\"><h2>$month $y</h2></span><table class=\"diaryTbl\" style=\"width: 100%; height: 24.25cm\">");
-            print("<thead><tr><th style=\"width: 40px;\">Date</th>");
+            print("<div style=\" page-break-after: always; width: 21cm; height: 31cm;\"><span style=\"font-family: " . $font . "; width: 100%; text-align: center;\"><h2>$month $y</h2></span><table class=\"diaryTbl\" style=\"width: 100%; height: 29cm\">");
+            print("<thead><tr><th style=\"width: 50px;\">Date</th>");
             $peopleRow = "";
             foreach ($people as $person) {
                 $peopleRow .= "<td></td>";
@@ -104,7 +104,11 @@ if (isset($a['submit'])) {
                 $day++;
             }
 
-            print("</table><center><b>$month $y</b></center></div>");
+            print("</table>");
+            print("<div style=\"bottom: 0px;\">");
+            print("<center><b>$month $y</b></center>");
+            print("</div>");
+            print("</div>");
         }
     };
 
