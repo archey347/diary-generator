@@ -1,26 +1,7 @@
 <?php
 $a = $_POST;
 if (isset($a['submit'])) {
-    $y = $a["year"];
-
-    if ($a['submit'] == "Generate w/ Template") {
-        $f = fopen("data.json", "r");
-        $data = fread($f, filesize("data.json"));
-        fclose($f);
-
-        $a = json_decode($data, true);
-
-        $a['year'] = $y;
-        $_POST = $a;
-    }
-    if ($a['submit'] == "Generate (and save as template)") {
-        $data = json_encode($a);
-        $f = fopen("data.json", "w");
-        fwrite($f, $data);
-        fclose($f);
-    }
-
-
+    $y = $a["yea.r"];
 
     $months = array(
         1 => "January",
@@ -80,7 +61,6 @@ if (isset($a['submit'])) {
         "monospace",
         "Comic Sans MS",
         "Brush Script Std, Brush Script MT, cursive",
-        "Impact, fantasy"
     );
     foreach ($months as $no => $month) {
         $day = 1;
@@ -128,7 +108,7 @@ if (isset($a['submit'])) {
     <style>
         body {
             size: 21cm 29.7cm;
-            margin: 30mm 45mm 30mm 45mm;
+            /*margin: 30mm 45mm 30mm 45mm;*/
             /* change the margins as you want them to be. */
         }
 
@@ -204,15 +184,18 @@ if (isset($a['submit'])) {
         <button type="button" onclick="addName()">Add</button><br><br>
         Add Birthday Column
         <input type="checkbox" value="yes" name="birthdayCol" checked id="birthdayCol" onclick="if(this.checked) { document.getElementById('birthdays').style.display = 'block'; } else { document.getElementById('birthdays').style.display = 'none'; }" />
-        <div id="birthdays" class="birthdays">
+        
+        <div id="birthdays" class="birthdays" style="padding-top: 10px;">
+            <textarea id="data" style="width: 300px; height: 400px; padding-bottom: 10px;"></textarea>
             <table>
                 <tr>
-                    <td>Name<br><input type="text" name="birthperson1" id="birthperson1" style="width: 200px;" /></td>
-                    <td>Date<br><input name="birthdate1" id="birthdate1" type="date"></td>
+                    <td>Name<br><input type="text" name="birth_name" id="birth_name" style="width: 200px;" /></td>
+                    <td>Date<br><input name="birth_date" id="birth_date" type="date"></td>
                 </tr>
             </table>
+            <button type="button" onclick="addBirthdate()">Add</button>
         </div>
-        <button type="button" onclick="addBirthdate()">Add</button>
+        
         <script type="text/javascript">
             nid = 1;
             bid = 1
@@ -234,31 +217,47 @@ if (isset($a['submit'])) {
                 }
             }
 
-            function addBirthdate() {
-                var names = []
-                var dates = []
-                index = 1
-                while (index <= bid) {
-                    names.push(document.getElementById("birthperson" + index.toFixed(0)).value);
-                    dates.push(document.getElementById("birthdate" + index.toFixed(0)).value);
-                    index++;
-                }
-                bid++;
-                document.getElementById("birthdays").innerHTML += "<table><tr><td>Name<br><input type=\"text\" name=\"birthperson" + bid + "\" id=\"birthperson" + bid + "\" style=\"width: 200px;\"/></td><td>Date<br><input name=\"birthdate" + bid + "\" id=\"birthdate" + bid + "\" type=\"date\"></td></tr></table>";
-                var arrayLength = names.length;
-                for (var i = 0; i < arrayLength; i++) {
-                    a = i + 1
+            document.addEventListener("DOMContentLoaded", function(event) { 
+                data = localStorage.getItem('birthdays')
 
-                    document.getElementById("birthperson" + a.toFixed(0)).value = names[i];
-                    document.getElementById("birthdate" + a.toFixed(0)).value = dates[i];
+                if (data == undefined) {
+                    data = JSON.stringify({ birthdays: [] }, null, 2)
                 }
+
+                document.getElementById('data').value = data
+            });
+
+            function addBirthdate() {
+                var data = {}
+                
+                try {
+                    data = JSON.parse(document.getElementById('data').value)
+                } catch {
+                    alert("Invalid JSON")
+                    return
+                }
+
+                if (data.birthdays == undefined) {
+                    data.birthdays = []
+                }
+
+                birth_name = document.getElementById('birth_name').value;
+                birth_date = document.getElementById('birth_date').value;
+
+                document.getElementById('birth_name').value = '';
+                document.getElementById('birth_date').value = '';
+
+                data.birthdays.push({
+                    name: birth_name,
+                    date: birth_date
+                })
+
+                document.getElementById('data').value = JSON.stringify(data, null, 2)
+                localStorage.setItem("birthdays", document.getElementById('data').value)
             }
         </script>
         <br>
         <input type="submit" name="submit" value="Generate" />
-        <input type="submit" name="submit" value="Generate (and save as template)" />
-
-        <input type="submit" name="submit" value="Generate w/ Template" />
     </form>
     <div style="width: 21 cm; height: 29.7 cm; background: black;">
     </div>
